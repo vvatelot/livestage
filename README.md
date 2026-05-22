@@ -192,11 +192,11 @@ Without Supabase, the app still works in local mode (IndexedDB), but without clo
 
 ### Option 2 — Vercel / Netlify
 
+The file [`netlify.toml`](netlify.toml) at the root configures the build (monorepo + plugin Next.js).
+
 1. Connect the Git repository
-2. **Root directory**: `apps/web`
-3. **Build command**: `cd ../.. && pnpm install && pnpm build`
-4. **Output**: handled automatically by Next.js
-5. Environment variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+2. **Do not override** `netlify.toml` in the UI: leave **Publish directory** empty or `.next` (not `apps/web`)
+3. Environment variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_APP_URL`
 
 Best if you want zero-ops deployment without managing a server.
 

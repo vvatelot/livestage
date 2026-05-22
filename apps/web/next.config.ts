@@ -8,10 +8,15 @@ const withSerwist = withSerwistInit({
   disable: process.env.NODE_ENV === "development",
 });
 
+const isNetlify = process.env.NETLIFY === "true";
+
 const nextConfig: NextConfig = {
   reactStrictMode: true,
-  output: "standalone",
-  outputFileTracingRoot: path.join(__dirname, "../../"),
+  // standalone is for Docker; Netlify uses @netlify/plugin-nextjs + .next output
+  ...(!isNetlify && {
+    output: "standalone",
+    outputFileTracingRoot: path.join(__dirname, "../../"),
+  }),
 };
 
 export default withSerwist(nextConfig);
