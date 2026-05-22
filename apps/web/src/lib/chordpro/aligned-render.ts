@@ -39,6 +39,7 @@ function transposeChordInBrackets(match: string, semitones: number): string {
   const name = match.slice(1, -1);
   try {
     const chord = Chord.parse(name);
+    if (!chord) return match;
     return `[${chord.transpose(semitones).toString()}]`;
   } catch {
     return match;

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
 import { Bookmark, Copy, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { getAppOrigin, getBookmarkletCode } from "@/lib/ug-import/bookmarklet";
