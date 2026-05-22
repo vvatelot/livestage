@@ -1,0 +1,220 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+  --background: oklch(0.985 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.45 0.18 260);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.96 0.01 260);
+  --secondary-foreground: oklch(0.25 0.05 260);
+  --muted: oklch(0.96 0 0);
+  --muted-foreground: oklch(0.5 0 0);
+  --accent: oklch(0.96 0.01 260);
+  --accent-foreground: oklch(0.25 0.05 260);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.9 0 0);
+  --input: oklch(0.9 0 0);
+  --ring: oklch(0.45 0.18 260);
+}
+
+.dark {
+  --background: oklch(0.12 0.01 260);
+  --foreground: oklch(0.96 0 0);
+  --card: oklch(0.16 0.01 260);
+  --card-foreground: oklch(0.96 0 0);
+  --popover: oklch(0.16 0.01 260);
+  --popover-foreground: oklch(0.96 0 0);
+  --primary: oklch(0.65 0.18 260);
+  --primary-foreground: oklch(0.12 0.01 260);
+  --secondary: oklch(0.22 0.02 260);
+  --secondary-foreground: oklch(0.96 0 0);
+  --muted: oklch(0.22 0.02 260);
+  --muted-foreground: oklch(0.65 0 0);
+  --accent: oklch(0.22 0.02 260);
+  --accent-foreground: oklch(0.96 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(0.28 0.02 260);
+  --input: oklch(0.28 0.02 260);
+  --ring: oklch(0.65 0.18 260);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}
+
+/* ChordSheetJS display — chords above lyrics */
+.chord-sheet {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+.chord-sheet .paragraph {
+  margin-bottom: 1.5rem;
+}
+
+.chord-sheet table.row {
+  border-collapse: collapse;
+  border: none;
+  margin: 0;
+}
+
+.chord-sheet table.row td {
+  padding: 0 0.1em 0 0;
+  vertical-align: bottom;
+  border: none;
+  white-space: pre;
+}
+
+.chord-sheet td.chord {
+  color: var(--primary);
+  font-weight: 700;
+  line-height: 1.2;
+  height: 1.2em;
+  vertical-align: bottom;
+}
+
+.chord-sheet td.lyrics {
+  line-height: 1.6;
+  vertical-align: bottom;
+  padding-bottom: 0.1em;
+}
+
+.chord-sheet td.chord:empty::before {
+  content: "\00a0";
+}
+
+.chord-sheet-live {
+  font-size: clamp(1.25rem, 4vw, 2.5rem);
+}
+
+.chord-sheet-live td.chord {
+  font-size: 0.65em;
+  color: oklch(0.75 0.18 80);
+}
+
+.chord-sheet-live.dark td.chord {
+  color: oklch(0.85 0.15 80);
+}
+
+.chord-sheet-live td.lyrics {
+  line-height: 1.8;
+}
+
+.chord-sheet .comment td {
+  color: var(--muted-foreground);
+  font-style: italic;
+  font-weight: 400;
+}
+
+/* UG-style: chords on line above lyrics, space-aligned */
+.chord-sheet-aligned {
+  font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+  white-space: pre;
+  tab-size: 2;
+  line-height: 1.4;
+}
+
+.chord-sheet-aligned .aligned-pair {
+  margin-bottom: 1.25rem;
+}
+
+.chord-sheet-aligned .chord-line {
+  color: var(--primary);
+  font-weight: 700;
+  min-height: 1.35em;
+  white-space: pre;
+}
+
+.chord-sheet-aligned .lyric-line {
+  white-space: pre;
+  margin-top: 0.1em;
+}
+
+.chord-sheet-aligned .chord-mark {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.chord-sheet-aligned .directive {
+  color: var(--muted-foreground);
+  font-style: italic;
+  margin: 1rem 0 0.5rem;
+  white-space: pre-wrap;
+}
+
+.chord-sheet-live.chord-sheet-aligned .chord-line,
+.chord-sheet-live.chord-sheet-aligned .chord-mark {
+  color: oklch(0.75 0.18 80);
+}
+
+.chord-sheet-live.dark.chord-sheet-aligned .chord-line,
+.chord-sheet-live.dark.chord-sheet-aligned .chord-mark {
+  color: oklch(0.85 0.15 80);
+}
+
+/* Impression depuis l’app (page /songs/[id]/print) */
+@media print {
+  header,
+  nav,
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
+  main {
+    padding: 0 !important;
+    max-width: none !important;
+  }
+  .song-print-sheet {
+    border: none !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    max-width: none !important;
+  }
+  .song-print-sheet .song-print-title,
+  .song-print-sheet .song-print-artist,
+  .song-print-sheet .song-print-meta {
+    color: #000 !important;
+  }
+  .chord-sheet td.chord,
+  .chord-sheet-aligned .chord-line,
+  .chord-sheet-aligned .chord-mark {
+    color: #1e40af !important;
+  }
+}
