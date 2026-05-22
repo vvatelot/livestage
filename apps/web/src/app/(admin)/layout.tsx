@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Music, ListMusic, Play, User } from "lucide-react";
+import { Music, Play, User } from "lucide-react";
 import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { SyncIndicator } from "@/components/sync-indicator";
 
