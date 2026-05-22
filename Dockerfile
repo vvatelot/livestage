@@ -22,6 +22,15 @@ ENV NEXT_TELEMETRY_DISABLED=1
 
 RUN pnpm build
 
+FROM node:20-alpine AS migrator
+RUN npm install -g supabase@2.101.0
+WORKDIR /app
+COPY supabase/config.toml ./supabase/config.toml
+COPY supabase/migrations ./supabase/migrations/
+COPY docker/supabase-migrate.sh /migrate.sh
+RUN chmod +x /migrate.sh
+ENTRYPOINT ["/migrate.sh"]
+
 FROM base AS runner
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
