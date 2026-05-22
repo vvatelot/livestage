@@ -19,8 +19,18 @@ import { SongPrintActions } from "@/components/song-print/song-print-actions";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { getSetlistWithSongs, prefetchSetlistForOffline } from "@/lib/db/repository";
-import { DEFAULT_LIVE_SETTINGS, type LiveSettings } from "@/lib/types";
+import {
+  getSetlistWithSongs,
+  prefetchSetlistForOffline,
+  updateSong,
+} from "@/lib/db/repository";
+import {
+  AUTO_SCROLL_SPEED_MAX,
+  AUTO_SCROLL_SPEED_MIN,
+  clampAutoScrollSpeed,
+  DEFAULT_LIVE_SETTINGS,
+  type LiveSettings,
+} from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 type LiveEntry =
@@ -31,6 +41,7 @@ type LiveEntry =
       artist: string;
       content: string;
       transpose: number;
+      autoScrollSpeed: number;
       notes?: string;
     }
   | {
@@ -54,6 +65,11 @@ export default function LiveModePage() {
   const autoScrollRef = useRef<number | null>(null);
   const wakeLockRef = useRef<WakeLockSentinel | null>(null);
   const controlsTimeoutRef = useRef<number | null>(null);
+  const scrollSpeedSaveRef = useRef<number | null>(null);
+  const pendingScrollSaveRef = useRef<{ songId: string; speed: number } | null>(
+    null
+  );
+  const scrollSpeedRef = useRef(DEFAULT_LIVE_SETTINGS.autoScrollSpeed);
 
   useEffect(() => {
     async function load() {
@@ -82,6 +98,7 @@ export default function LiveModePage() {
           artist: i.song.artist,
           content: i.song.chordproContent,
           transpose: i.transpose ?? 0,
+          autoScrollSpeed: clampAutoScrollSpeed(i.song.autoScrollSpeed),
           notes: i.notes,
         });
       }
@@ -109,6 +126,56 @@ export default function LiveModePage() {
     };
   }, []);
 
+  useEffect(() => {
+    return () => {
+      if (scrollSpeedSaveRef.current !== null) {
+        clearTimeout(scrollSpeedSaveRef.current);
+      }
+      const pending = pendingScrollSaveRef.current;
+      if (pending) {
+        void updateSong(pending.songId, { autoScrollSpeed: pending.speed });
+      }
+    };
+  }, []);
+
+  const currentScrollSpeed =
+    items[currentIndex]?.kind === "song"
+      ? items[currentIndex].autoScrollSpeed
+      : DEFAULT_LIVE_SETTINGS.autoScrollSpeed;
+
+  scrollSpeedRef.current = currentScrollSpeed;
+
+  function persistScrollSpeed(songId: string, speed: number) {
+    pendingScrollSaveRef.current = { songId, speed };
+    if (scrollSpeedSaveRef.current !== null) {
+      clearTimeout(scrollSpeedSaveRef.current);
+    }
+    scrollSpeedSaveRef.current = window.setTimeout(() => {
+      scrollSpeedSaveRef.current = null;
+      const pending = pendingScrollSaveRef.current;
+      pendingScrollSaveRef.current = null;
+      if (pending) {
+        void updateSong(pending.songId, { autoScrollSpeed: pending.speed });
+      }
+    }, 400);
+  }
+
+  function setCurrentSongScrollSpeed(speed: number) {
+    const clamped = clampAutoScrollSpeed(speed);
+    scrollSpeedRef.current = clamped;
+    setItems((prev) => {
+      const entry = prev[currentIndex];
+      if (entry?.kind === "song") {
+        persistScrollSpeed(entry.songId, clamped);
+      }
+      return prev.map((item, idx) =>
+        idx === currentIndex && item.kind === "song"
+          ? { ...item, autoScrollSpeed: clamped }
+          : item
+      );
+    });
+  }
+
   // Auto-scroll
   useEffect(() => {
     if (!settings.autoScroll || !scrollRef.current) {
@@ -119,11 +186,19 @@ export default function LiveModePage() {
     }
 
     let lastTime = 0;
+    let remainder = 0;
+    let running = true;
+
     const scroll = (time: number) => {
-      if (!scrollRef.current) return;
+      if (!running || !scrollRef.current) return;
       if (lastTime) {
-        const delta = time - lastTime;
-        scrollRef.current.scrollTop += (settings.autoScrollSpeed * delta) / 1000;
+        const delta = Math.min(time - lastTime, 50);
+        const pixels = (scrollSpeedRef.current * delta) / 1000 + remainder;
+        const step = Math.floor(pixels);
+        remainder = pixels - step;
+        if (step > 0) {
+          scrollRef.current.scrollTop += step;
+        }
       }
       lastTime = time;
       autoScrollRef.current = requestAnimationFrame(scroll);
@@ -132,11 +207,12 @@ export default function LiveModePage() {
     autoScrollRef.current = requestAnimationFrame(scroll);
 
     return () => {
+      running = false;
       if (autoScrollRef.current) {
         cancelAnimationFrame(autoScrollRef.current);
       }
     };
-  }, [settings.autoScroll, settings.autoScrollSpeed, currentIndex]);
+  }, [settings.autoScroll, currentIndex]);
 
   const hideControlsLater = useCallback(() => {
     if (controlsTimeoutRef.current) {
@@ -357,22 +433,22 @@ export default function LiveModePage() {
                 }
               />
             </div>
-            {settings.autoScroll && (
+            {settings.autoScroll && isSong && (
               <div className="flex items-center gap-3">
                 <Label className="text-white text-sm shrink-0">Vitesse</Label>
                 <input
                   type="range"
-                  min={10}
-                  max={80}
-                  value={settings.autoScrollSpeed}
+                  min={AUTO_SCROLL_SPEED_MIN}
+                  max={AUTO_SCROLL_SPEED_MAX}
+                  value={current.autoScrollSpeed}
                   onChange={(e) =>
-                    setSettings((s) => ({
-                      ...s,
-                      autoScrollSpeed: parseInt(e.target.value, 10),
-                    }))
+                    setCurrentSongScrollSpeed(Number(e.target.value))
                   }
                   className="flex-1"
                 />
+                <span className="text-white/70 text-xs w-8 text-right tabular-nums">
+                  {current.autoScrollSpeed}
+                </span>
               </div>
             )}
             {isSong && (

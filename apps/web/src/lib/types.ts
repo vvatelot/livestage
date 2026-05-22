@@ -8,6 +8,8 @@ export interface Song {
   sourceUrl?: string;
   youtubeUrl?: string;
   tags?: string[];
+  /** Vitesse auto-scroll mode scène (px/s). */
+  autoScrollSpeed?: number;
   createdAt: string;
   updatedAt: string;
   syncedAt?: string;
@@ -74,6 +76,18 @@ export interface LiveSettings {
   autoScroll: boolean;
   autoScrollSpeed: number;
   locked: boolean;
+}
+
+export const AUTO_SCROLL_SPEED_MIN = 10;
+export const AUTO_SCROLL_SPEED_MAX = 80;
+
+export function clampAutoScrollSpeed(speed: unknown): number {
+  const n = typeof speed === "number" ? speed : Number(speed);
+  if (!Number.isFinite(n)) return DEFAULT_LIVE_SETTINGS.autoScrollSpeed;
+  return Math.min(
+    AUTO_SCROLL_SPEED_MAX,
+    Math.max(AUTO_SCROLL_SPEED_MIN, Math.round(n))
+  );
 }
 
 export const DEFAULT_LIVE_SETTINGS: LiveSettings = {

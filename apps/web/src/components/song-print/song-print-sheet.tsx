@@ -23,7 +23,7 @@ export function SongPrintSheet({ data }: SongPrintSheetProps) {
 
   return (
     <article className="song-print-sheet max-w-3xl mx-auto bg-white text-black rounded-lg border p-8 print:border-0 print:p-0 print:max-w-none">
-      <header className="song-print-header mb-6">
+      <div className="song-print-header mb-6">
         <h1 className="song-print-title text-2xl font-bold">
           {data.title.trim() || "Sans titre"}
         </h1>
@@ -37,7 +37,7 @@ export function SongPrintSheet({ data }: SongPrintSheetProps) {
             {metaParts.join(" · ")}
           </p>
         )}
-      </header>
+      </div>
       <ChordDisplay
         content={data.chordproContent}
         transpose={transpose}

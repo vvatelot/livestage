@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { MessageSquare, Music, Play } from "lucide-react";
+import { SetlistPrintButton } from "@/components/setlist-print/setlist-print-button";
 import {
   SetlistSortable,
   type SetlistSortableRow,
@@ -139,6 +140,7 @@ export default function SetlistDetailPage() {
             <MessageSquare className="h-4 w-4" />
             Section
           </Button>
+          <SetlistPrintButton setlistId={id} />
           <Button asChild>
             <Link href={`/live/${id}`}>
               <Play className="h-4 w-4" />

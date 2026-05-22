@@ -21,6 +21,7 @@ export interface Database {
           source_url: string | null;
           youtube_url: string | null;
           tags: string[] | null;
+          auto_scroll_speed: number | null;
           deleted: boolean;
           created_at: string;
           updated_at: string;
@@ -36,6 +37,7 @@ export interface Database {
           source_url?: string | null;
           youtube_url?: string | null;
           tags?: string[] | null;
+          auto_scroll_speed?: number | null;
           deleted?: boolean;
           created_at?: string;
           updated_at?: string;
@@ -51,6 +53,7 @@ export interface Database {
           source_url?: string | null;
           youtube_url?: string | null;
           tags?: string[] | null;
+          auto_scroll_speed?: number | null;
           deleted?: boolean;
           created_at?: string;
           updated_at?: string;

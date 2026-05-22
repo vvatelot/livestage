@@ -136,6 +136,7 @@ Directives supportées : métadonnées (`title`, `artist`, `key`, `capo`, `subti
 - **Nouvelle setlist** : nom + date optionnelle
 - **Détail** (`/setlists/[id]`) : ajout de chansons, réorganisation par glisser-déposer, suppression
 - **Dupliquer / Supprimer** depuis la liste
+- **Imprimer** : feuille A4 (titre, date, chansons et sections)
 - **Mode scène** : lance le prompteur sur la setlist
 
 Les chansons d'une setlist sont pré-chargées pour un usage offline.
@@ -146,7 +147,7 @@ Prompteur plein écran optimisé tablette :
 
 - **Navigation** : flèches clavier, swipe gauche/droite, boutons bas de page
 - **Contrôles** (barre supérieure, masqués après 3 s) : taille de police, mode sombre/clair, verrouillage
-- **Auto-scroll** : défilement automatique avec réglage de vitesse
+- **Auto-scroll** : défilement automatique ; la vitesse est enregistrée par chanson
 - **Transposition** : par chanson, en session (ne modifie pas la source)
 - **Wake lock** : empêche la mise en veille de l'écran
 - **Échap** ou bouton ✕ : retour à la setlist

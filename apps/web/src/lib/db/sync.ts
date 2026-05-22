@@ -2,6 +2,7 @@ import { db } from "@/lib/db";
 import { getAuthContext } from "@/lib/supabase/auth";
 import { createClient, isSupabaseConfigured } from "@/lib/supabase/client";
 import type { Setlist, SetlistItem, Song } from "@/lib/types";
+import { clampAutoScrollSpeed } from "@/lib/types";
 
 const MAX_SYNC_RETRIES = 3;
 
@@ -17,6 +18,7 @@ function songToRemote(song: Song, userId: string) {
     source_url: song.sourceUrl ?? null,
     youtube_url: song.youtubeUrl ?? null,
     tags: song.tags ?? null,
+    auto_scroll_speed: song.autoScrollSpeed ?? null,
     deleted: song.deleted ?? false,
     created_at: song.createdAt,
     updated_at: song.updatedAt,
@@ -34,6 +36,10 @@ function songFromRemote(row: Record<string, unknown>): Song {
     sourceUrl: (row.source_url as string) ?? undefined,
     youtubeUrl: (row.youtube_url as string) ?? undefined,
     tags: (row.tags as string[]) ?? undefined,
+    autoScrollSpeed:
+      row.auto_scroll_speed != null
+        ? clampAutoScrollSpeed(row.auto_scroll_speed)
+        : undefined,
     deleted: (row.deleted as boolean) ?? false,
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,

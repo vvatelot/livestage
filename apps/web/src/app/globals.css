@@ -186,9 +186,14 @@
   color: oklch(0.85 0.15 80);
 }
 
-/* Impression depuis l’app (page /songs/[id]/print) */
+/* Impression depuis l’app (chansons, setlists) */
+@page {
+  size: A4;
+  margin: 12mm 15mm;
+}
+
 @media print {
-  header,
+  .app-header,
   nav,
   .no-print {
     display: none !important;
@@ -201,7 +206,8 @@
     padding: 0 !important;
     max-width: none !important;
   }
-  .song-print-sheet {
+  .song-print-sheet,
+  .setlist-print-sheet {
     border: none !important;
     padding: 0 !important;
     box-shadow: none !important;
@@ -209,8 +215,19 @@
   }
   .song-print-sheet .song-print-title,
   .song-print-sheet .song-print-artist,
-  .song-print-sheet .song-print-meta {
+  .song-print-sheet .song-print-meta,
+  .setlist-print-sheet .setlist-print-title,
+  .setlist-print-sheet .setlist-print-date,
+  .setlist-print-sheet .setlist-print-notes,
+  .setlist-print-sheet .setlist-print-song-title,
+  .setlist-print-sheet .setlist-print-song-artist,
+  .setlist-print-sheet .setlist-print-section-title {
     color: #000 !important;
+  }
+  .setlist-print-item--marker {
+    background: #f5f5f5 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
   }
   .chord-sheet td.chord,
   .chord-sheet-aligned .chord-line,
