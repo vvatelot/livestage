@@ -1,17 +1,17 @@
 # LiveStage
 
-PWA offline-first pour gérer un répertoire de chansons (format ChordPro), des setlists, et un mode scène type prompteur sur tablette.
+Offline-first PWA to manage a song repertoire (ChordPro format), setlists, and a tablet-style stage prompter mode.
 
 ## Stack
 
 - **Next.js 15** + React + TypeScript
 - **Serwist** (PWA / service worker)
 - **Dexie.js** (IndexedDB offline-first)
-- **Supabase** (auth, sync cloud)
-- **ChordSheetJS** (rendu ChordPro)
+- **Supabase** (auth, cloud sync)
+- **ChordSheetJS** (ChordPro rendering)
 - **Tailwind CSS** + shadcn/ui
 
-## Démarrage
+## Getting started
 
 ```bash
 pnpm install
@@ -19,99 +19,99 @@ cp apps/web/.env.example apps/web/.env.local
 pnpm dev
 ```
 
-Ouvrir [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Structure
 
 ```
 livestage/
-├── apps/web/          # Application Next.js PWA
+├── apps/web/          # Next.js PWA application
 └── supabase/          # Migrations + Edge Functions
 ```
 
-## Fonctionnalités
+## Features
 
-- Bibliothèque de chansons (paroles + accords ChordPro)
-- Setlists avec drag & drop
-- Mode scène plein écran (prompteur live)
-- Sync cloud Supabase
-- Import Ultimate Guitar
+- Song library (lyrics + ChordPro chords)
+- Setlists with drag & drop
+- Full-screen stage mode (live prompter)
+- Supabase cloud sync
+- Ultimate Guitar import
 
 ## Interface
 
 ### Navigation
 
-L'application se divise en trois zones principales, accessibles depuis l'en-tête :
+The app is divided into three main areas, accessible from the header:
 
 | Section | Route | Description |
 |---------|-------|-------------|
-| **Accueil** | `/` | Vue d'ensemble et raccourcis |
-| **Bibliothèque** | `/songs` | Liste, recherche, import et export des chansons |
-| **Setlists** | `/setlists` | Création et gestion des setlists |
-| **Mode scène** | `/live/[id]` | Prompteur plein écran (depuis une setlist) |
-| **Compte** | `/auth` | Authentification Supabase |
+| **Home** | `/` | Overview and shortcuts |
+| **Library** | `/songs` | List, search, import and export songs |
+| **Setlists** | `/setlists` | Create and manage setlists |
+| **Stage mode** | `/live/[id]` | Full-screen prompter (from a setlist) |
+| **Account** | `/auth` | Supabase authentication |
 
-Sur mobile, une barre de navigation fixe en bas donne accès à la bibliothèque et aux setlists. L'indicateur de sync (en-tête) signale l'état de synchronisation cloud.
+On mobile, a fixed bottom navigation bar provides access to the library and setlists. The sync indicator (header) shows cloud sync status.
 
-### Bibliothèque (`/songs`)
+### Library (`/songs`)
 
-- **Recherche** par titre ou artiste
-- **Nouvelle chanson** → éditeur ChordPro
-- **Importer** : bookmarklet Ultimate Guitar (recommandé, lit `UGAPP` / JSON embarqué), URL UG, HTML de page UG, ou texte ChordPro / JSON UG
-- **Fichier .cho** : import direct (`.cho`, `.pro`, `.chordpro`, `.txt`)
-- **Export** : téléchargement au format ChordPro (`.cho`)
-- Clic sur une chanson → édition
+- **Search** by title or artist
+- **New song** → ChordPro editor
+- **Import**: Ultimate Guitar bookmarklet (recommended, reads `UGAPP` / embedded JSON), UG URL, UG page HTML, or ChordPro text / UG JSON
+- **`.cho` file**: direct import (`.cho`, `.pro`, `.chordpro`, `.txt`)
+- **Export**: download in ChordPro format (`.cho`)
+- Click a song → edit
 
-### Éditeur de chanson (`/songs/new`, `/songs/[id]`)
+### Song editor (`/songs/new`, `/songs/[id]`)
 
-L'éditeur est un **éditeur texte ChordPro avec aperçu HTML en temps réel** — ce n'est pas un éditeur WYSIWYG (on ne peut pas cliquer dans l'aperçu pour modifier accords ou paroles).
+The editor is a **ChordPro text editor with live HTML preview** — it is not a WYSIWYG editor (you cannot click in the preview to edit chords or lyrics).
 
-| Zone | Rôle |
+| Area | Role |
 |------|------|
-| **Titre / Artiste / Tonalité / Capo** | Métadonnées (champs séparés, auto-remplis depuis le texte ChordPro si vides) |
-| **Textarea ChordPro** | Contenu principal (paroles + accords) |
-| **Boutons ±** | Transposition d'**aperçu uniquement** (ne modifie pas le contenu sauvegardé) |
-| **Masquer / Aperçu** | Affiche ou cache le panneau de rendu |
-| **Aperçu** | Rendu HTML des accords au-dessus des paroles (ChordSheetJS) |
-| **Imprimer** | Page d’impression dédiée puis boîte de dialogue système (transposition d’aperçu incluse) |
+| **Title / Artist / Key / Capo** | Metadata (separate fields, auto-filled from ChordPro text when empty) |
+| **ChordPro textarea** | Main content (lyrics + chords) |
+| **± buttons** | **Preview-only** transposition (does not change saved content) |
+| **Hide / Preview** | Show or hide the render panel |
+| **Preview** | HTML render of chords above lyrics (ChordSheetJS) |
+| **Print** | Dedicated print page then system print dialog (includes preview transposition) |
 
-En édition, les modifications sont enregistrées automatiquement dans IndexedDB. Le bouton **Enregistrer** ramène à la bibliothèque.
+When editing, changes are saved automatically to IndexedDB. The **Save** button returns to the library.
 
-**Impression** : depuis l’éditeur, l’en-tête de la chanson ou le mode scène. Pour un PDF, choisir « Enregistrer au format PDF » dans la boîte de dialogue d’impression du navigateur.
+**Printing**: from the editor, song header, or stage mode. For a PDF, choose “Save as PDF” in the browser’s print dialog.
 
-#### Syntaxe ChordPro
+#### ChordPro syntax
 
-LiveStage stocke et affiche le format [ChordPro](https://www.chordpro.org/), parsé par ChordSheetJS.
+LiveStage stores and displays the [ChordPro](https://www.chordpro.org/) format, parsed by ChordSheetJS.
 
-**Directives** (métadonnées et structure) :
+**Directives** (metadata and structure):
 
 ```chordpro
-{title: Mon titre}
-{artist: Mon artiste}
+{title: My title}
+{artist: My artist}
 {key: G}
 {capo: 3}
-{comment: Intro — 4 mesures}
+{comment: Intro — 4 bars}
 ```
 
-**Accords inline** — entre crochets, placés juste avant la syllabe :
+**Inline chords** — in square brackets, placed just before the syllable:
 
 ```chordpro
 Let it [Am]be, let it [C/G]be
 ```
 
-**Sections** :
+**Sections**:
 
 ```chordpro
 {start_of_verse}
-Première ligne [G]avec accords
+First line [G]with chords
 {end_of_verse}
 
 {start_of_chorus}
-Refrain [D]ici
+Chorus [D]here
 {end_of_chorus}
 ```
 
-**Exemple complet** :
+**Full example**:
 
 ```chordpro
 {title: Swing Low Sweet Chariot}
@@ -129,104 +129,104 @@ To the [E]place I be[A]long
 {end_of_chorus}
 ```
 
-Directives supportées : métadonnées (`title`, `artist`, `key`, `capo`, `subtitle`…), sections (`start_of_verse`, `start_of_chorus`, `start_of_tab`…), commentaires (`comment`), diagrammes d'accords (`define`, `chord`). Voir la [spec ChordPro](https://www.chordpro.org/chordpro/chordpro-file-format-specification/) et les [directives ChordSheetJS](https://github.com/martijnversluis/ChordSheetJS#supported-chordpro-directives).
+Supported directives: metadata (`title`, `artist`, `key`, `capo`, `subtitle`…), sections (`start_of_verse`, `start_of_chorus`, `start_of_tab`…), comments (`comment`), chord diagrams (`define`, `chord`). See the [ChordPro spec](https://www.chordpro.org/chordpro/chordpro-file-format-specification/) and [ChordSheetJS directives](https://github.com/martijnversluis/ChordSheetJS#supported-chordpro-directives).
 
 ### Setlists (`/setlists`)
 
-- **Nouvelle setlist** : nom + date optionnelle
-- **Détail** (`/setlists/[id]`) : ajout de chansons, réorganisation par glisser-déposer, suppression
-- **Dupliquer / Supprimer** depuis la liste
-- **Imprimer** : feuille A4 (titre, date, chansons et sections)
-- **Mode scène** : lance le prompteur sur la setlist
+- **New setlist**: name + optional date
+- **Detail** (`/setlists/[id]`): add songs, reorder via drag & drop, remove
+- **Duplicate / Delete** from the list
+- **Print**: A4 sheet (title, date, songs and sections)
+- **Stage mode**: launches the prompter for the setlist
 
-Les chansons d'une setlist sont pré-chargées pour un usage offline.
+Songs in a setlist are preloaded for offline use.
 
-### Mode scène (`/live/[id]`)
+### Stage mode (`/live/[id]`)
 
-Prompteur plein écran optimisé tablette :
+Full-screen prompter optimized for tablets:
 
-- **Navigation** : flèches clavier, swipe gauche/droite, boutons bas de page
-- **Contrôles** (barre supérieure, masqués après 3 s) : taille de police, mode sombre/clair, verrouillage
-- **Auto-scroll** : défilement automatique ; la vitesse est enregistrée par chanson
-- **Transposition** : par chanson, en session (ne modifie pas la source)
-- **Wake lock** : empêche la mise en veille de l'écran
-- **Échap** ou bouton ✕ : retour à la setlist
+- **Navigation**: keyboard arrows, left/right swipe, bottom buttons
+- **Controls** (top bar, hidden after 3 s): font size, dark/light mode, lock
+- **Auto-scroll**: automatic scrolling; speed is saved per song
+- **Transposition**: per song, in session (does not modify the source)
+- **Wake lock**: prevents the screen from sleeping
+- **Escape** or ✕ button: return to the setlist
 
-### Installation PWA
+### PWA installation
 
-Installez LiveStage sur tablette pour une utilisation offline sur scène :
+Install LiveStage on a tablet for offline use on stage:
 
-- **iOS** : Partager → Sur l'écran d'accueil
-- **Android** : Installer l'application
+- **iOS**: Share → Add to Home Screen
+- **Android**: Install app
 
-## Déploiement
+## Deployment
 
-### Option 1 — Docker Compose (recommandé)
+### Option 1 — Docker Compose (recommended)
 
-Le plus simple pour un VPS ou un serveur local.
+The simplest approach for a VPS or local server.
 
-**Prérequis** : Docker + Docker Compose, projet Supabase configuré (voir migration SQL).
+**Prerequisites**: Docker + Docker Compose, Supabase project configured (see SQL migration).
 
 ```bash
-# 1. Configurer les variables
+# 1. Configure environment variables
 cp .env.docker.example .env.docker
-# Éditer .env.docker avec vos clés Supabase
+# Edit .env.docker with your Supabase keys
 
-# 2. Build et lancement
+# 2. Build and run
 pnpm docker:build
 pnpm docker:up
 
-# L'app est accessible sur http://localhost:3000 (ou le PORT défini)
+# App is available at http://localhost:3000 (or the PORT you set)
 ```
 
-Commandes utiles :
+Useful commands:
 
 ```bash
-pnpm docker:logs    # voir les logs
-pnpm docker:down    # arrêter
+pnpm docker:logs    # view logs
+pnpm docker:down    # stop
 ```
 
-> **Important** : les variables `NEXT_PUBLIC_*` sont intégrées au build. Si vous changez l'URL ou la clé Supabase, relancez `pnpm docker:build`.
+> **Important**: `NEXT_PUBLIC_*` variables are baked into the build. If you change the Supabase URL or key, run `pnpm docker:build` again.
 
-Sans Supabase, l'app fonctionne quand même en mode local (IndexedDB), mais sans sync cloud.
+Without Supabase, the app still works in local mode (IndexedDB), but without cloud sync.
 
 ### Option 2 — Vercel / Netlify
 
-1. Connecter le dépôt Git
-2. **Root directory** : `apps/web`
-3. **Build command** : `cd ../.. && pnpm install && pnpm build`
-4. **Output** : géré automatiquement par Next.js
-5. Variables d'environnement : `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+1. Connect the Git repository
+2. **Root directory**: `apps/web`
+3. **Build command**: `cd ../.. && pnpm install && pnpm build`
+4. **Output**: handled automatically by Next.js
+5. Environment variables: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
 
-Adapté si vous voulez un déploiement zero-ops sans gérer un serveur.
+Best if you want zero-ops deployment without managing a server.
 
-### Option 3 — VPS manuel (sans Docker)
+### Option 3 — Manual VPS (no Docker)
 
 ```bash
 pnpm install
 cp apps/web/.env.example apps/web/.env.local
-# Renseigner les clés Supabase
+# Add Supabase keys
 pnpm build
 pnpm start
 ```
 
-Utiliser un reverse proxy (Caddy, Nginx, Traefik) avec HTTPS devant le port 3000.
+Use a reverse proxy (Caddy, Nginx, Traefik) with HTTPS in front of port 3000.
 
 ### Supabase
 
-Le backend Supabase reste **cloud** (supabase.com) dans tous les cas. Exécutez les migrations dans le **SQL Editor** Supabase (dans l’ordre) avant la première connexion :
+The Supabase backend stays **in the cloud** (supabase.com) in all cases. Run migrations in the Supabase **SQL Editor** (in order) before the first login:
 
 1. [`supabase/migrations/20250520000000_initial_schema.sql`](supabase/migrations/20250520000000_initial_schema.sql)
-2. [`supabase/migrations/20250520140000_fix_rls_user_id.sql`](supabase/migrations/20250520140000_fix_rls_user_id.sql) — corrige les erreurs RLS (`new row violates row-level security policy`)
-3. [`supabase/migrations/20250520150000_add_youtube_url.sql`](supabase/migrations/20250520150000_add_youtube_url.sql) — champ vidéo YouTube par chanson
+2. [`supabase/migrations/20250520140000_fix_rls_user_id.sql`](supabase/migrations/20250520140000_fix_rls_user_id.sql) — fixes RLS errors (`new row violates row-level security policy`)
+3. [`supabase/migrations/20250520150000_add_youtube_url.sql`](supabase/migrations/20250520150000_add_youtube_url.sql) — YouTube video URL field per song
 
-La sync cloud ne fonctionne qu’**après connexion** sur `/auth`. Les erreurs RLS dans les logs signifient en général : migration manquante, session expirée, ou sync tentée sans être connecté.
+Cloud sync only works **after logging in** at `/auth`. RLS errors in logs usually mean: missing migration, expired session, or sync attempted while not logged in.
 
 ```bash
 supabase login
-supabase link --project-ref <votre-ref>
+supabase link --project-ref <your-ref>
 supabase db push
 supabase functions deploy import-ultimate-guitar
 ```
 
-Si `uuid_generate_v4() does not exist` : les migrations utilisent `gen_random_uuid()` (compatible Supabase cloud). Relancez `supabase db push` après mise à jour du dépôt.
+If `uuid_generate_v4() does not exist`: migrations use `gen_random_uuid()` (Supabase cloud compatible). Run `supabase db push` again after updating the repo.
