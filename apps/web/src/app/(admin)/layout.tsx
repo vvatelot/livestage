@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Music, ListMusic, Play } from "lucide-react";
+import { Music, ListMusic, Play, User } from "lucide-react";
+import { MobileBottomNav } from "@/components/mobile-bottom-nav";
 import { SyncIndicator } from "@/components/sync-indicator";
 
 export const dynamic = "force-dynamic";
@@ -39,11 +40,19 @@ export default function AdminLayout({
               </Link>
             </nav>
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
             <SyncIndicator />
             <Link
+              href="/auth"
+              className="sm:hidden inline-flex items-center justify-center rounded-md border border-input bg-background p-2 text-muted-foreground hover:bg-accent hover:text-foreground"
+              aria-label="Compte et connexion"
+            >
+              <User className="h-4 w-4" />
+            </Link>
+            <Link
               href="/setlists"
-              className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              className="inline-flex items-center gap-2 rounded-md bg-primary px-2.5 py-1.5 sm:px-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+              aria-label="Mode scène"
             >
               <Play className="h-4 w-4" />
               <span className="hidden sm:inline">Mode scène</span>
@@ -52,20 +61,11 @@ export default function AdminLayout({
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto px-4 py-6">{children}</main>
+      <main className="flex-1 container mx-auto px-4 py-6 pb-[calc(5.5rem+env(safe-area-inset-bottom,0px))] sm:pb-6">
+        {children}
+      </main>
 
-      <nav className="sm:hidden fixed bottom-0 inset-x-0 border-t bg-background z-40">
-        <div className="flex justify-around py-2">
-          <Link href="/songs" className="flex flex-col items-center gap-1 px-3 py-1 text-xs text-muted-foreground">
-            <Music className="h-5 w-5" />
-            Chansons
-          </Link>
-          <Link href="/setlists" className="flex flex-col items-center gap-1 px-3 py-1 text-xs text-muted-foreground">
-            <ListMusic className="h-5 w-5" />
-            Setlists
-          </Link>
-        </div>
-      </nav>
+      <MobileBottomNav />
     </div>
   );
 }

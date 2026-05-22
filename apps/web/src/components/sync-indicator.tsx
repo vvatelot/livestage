@@ -34,9 +34,12 @@ export function SyncIndicator() {
 
   if (!isSupabaseConfigured()) {
     return (
-      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-        <CloudOff className="h-3.5 w-3.5" />
-        <span>Local</span>
+      <div
+        className="flex items-center gap-1.5 text-xs text-muted-foreground"
+        title="Mode local (sans cloud)"
+      >
+        <CloudOff className="h-3.5 w-3.5 shrink-0" />
+        <span className="max-sm:sr-only">Local</span>
       </div>
     );
   }
@@ -44,25 +47,38 @@ export function SyncIndicator() {
   const Icon =
     status === "syncing" ? Loader2 : status === "offline" ? CloudOff : Cloud;
 
+  const label =
+    status === "syncing"
+      ? "Sync..."
+      : status === "synced"
+        ? "Synchronisé"
+        : status === "offline"
+          ? "Hors ligne"
+          : status === "error"
+            ? "Erreur sync"
+            : "En attente";
+  const pendingLabel =
+    pending > 0
+      ? ` (${pending > 99 ? "99+" : pending} modification${pending > 1 ? "s" : ""})`
+      : "";
+
   return (
     <div
       className={cn(
-        "flex items-center gap-1.5 text-xs",
+        "flex items-center gap-1.5 text-xs max-w-[9rem] sm:max-w-none",
         status === "synced" && "text-green-600",
         status === "error" && "text-destructive",
         status === "offline" && "text-muted-foreground",
         status === "syncing" && "text-muted-foreground"
       )}
+      title={`${label}${pendingLabel}`}
     >
-      <Icon className={cn("h-3.5 w-3.5", status === "syncing" && "animate-spin")} />
-      <span>
-        {status === "syncing" && "Sync..."}
-        {status === "synced" && "Synchronisé"}
-        {status === "offline" && "Hors ligne"}
-        {status === "error" && "Erreur sync"}
-        {status === "idle" && "En attente"}
-        {pending > 0 &&
-          ` (${pending > 99 ? "99+" : pending} modification${pending > 1 ? "s" : ""})`}
+      <Icon
+        className={cn("h-3.5 w-3.5 shrink-0", status === "syncing" && "animate-spin")}
+      />
+      <span className="max-sm:sr-only">
+        {label}
+        {pendingLabel}
       </span>
     </div>
   );
