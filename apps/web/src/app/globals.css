@@ -77,6 +77,21 @@
   }
 }
 
+/* Ajuste la largeur sans casser l’alignement accords / paroles (évite overflow-x) */
+.chord-display-fit {
+  overflow: hidden;
+}
+
+.chord-display-fit-inner {
+  transform-origin: top left;
+  transform: scale(var(--chord-sheet-scale, 1));
+  width: var(--chord-sheet-inner-w, auto);
+}
+
+.chord-display-fit-shell {
+  max-width: 100%;
+}
+
 /* ChordSheetJS display — chords above lyrics */
 .chord-sheet {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
@@ -193,6 +208,23 @@
 }
 
 @media print {
+  .chord-display-fit {
+    overflow: visible !important;
+    height: auto !important;
+  }
+
+  .chord-display-fit-shell {
+    width: auto !important;
+    height: auto !important;
+  }
+
+  .chord-display-fit-inner {
+    --chord-sheet-scale: 1;
+    --chord-sheet-inner-w: auto;
+    transform: none !important;
+    width: auto !important;
+  }
+
   .app-header,
   nav,
   .no-print {

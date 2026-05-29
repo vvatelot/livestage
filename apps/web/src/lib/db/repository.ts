@@ -370,24 +370,5 @@ export async function getPendingSyncCount(): Promise<number> {
   return db.syncQueue.count();
 }
 
-export async function seedDemoData(): Promise<void> {
-  const count = await db.songs.count();
-  if (count > 0) return;
-
-  const { SAMPLE_CHORDPRO } = await import("@/lib/types");
-  const song = await createSong({
-    title: "Swing Low Sweet Chariot",
-    artist: "Traditional",
-    key: "D",
-    capo: 0,
-    chordproContent: SAMPLE_CHORDPRO,
-  });
-
-  const setlist = await createSetlist({
-    name: "Concert démo",
-    eventDate: new Date().toISOString().split("T")[0],
-    notes: "Setlist de démonstration",
-  });
-
-  await addSetlistItem(setlist.id, song.id);
-}
+/** @deprecated Ne fait plus rien — conservé pour les bundles en cache qui l’appellent encore. */
+export async function seedDemoData(): Promise<void> {}
