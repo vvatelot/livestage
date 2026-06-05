@@ -77,24 +77,19 @@
   }
 }
 
-/* Ajuste la largeur sans casser l’alignement accords / paroles (évite overflow-x) */
-.chord-display-fit {
-  overflow: hidden;
-}
-
-.chord-display-fit-inner {
-  transform-origin: top left;
-  transform: scale(var(--chord-sheet-scale, 1));
-  width: var(--chord-sheet-inner-w, auto);
-}
-
-.chord-display-fit-shell {
-  max-width: 100%;
-}
-
 /* ChordSheetJS display — chords above lyrics */
+.chord-display,
+.chord-sheet {
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
 .chord-sheet {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+
+pre.chord-sheet {
+  white-space: pre-wrap;
 }
 
 .chord-sheet .paragraph {
@@ -102,16 +97,24 @@
 }
 
 .chord-sheet table.row {
+  display: block;
   border-collapse: collapse;
   border: none;
   margin: 0;
+  max-width: 100%;
+}
+
+.chord-sheet table.row tbody,
+.chord-sheet table.row tr {
+  display: block;
 }
 
 .chord-sheet table.row td {
+  display: inline;
   padding: 0 0.1em 0 0;
   vertical-align: bottom;
   border: none;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .chord-sheet td.chord {
@@ -158,7 +161,7 @@
 /* UG-style: chords on line above lyrics, space-aligned */
 .chord-sheet-aligned {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
-  white-space: pre;
+  white-space: pre-wrap;
   tab-size: 2;
   line-height: 1.4;
 }
@@ -171,11 +174,11 @@
   color: var(--primary);
   font-weight: 700;
   min-height: 1.35em;
-  white-space: pre;
+  white-space: pre-wrap;
 }
 
 .chord-sheet-aligned .lyric-line {
-  white-space: pre;
+  white-space: pre-wrap;
   margin-top: 0.1em;
 }
 
@@ -208,23 +211,6 @@
 }
 
 @media print {
-  .chord-display-fit {
-    overflow: visible !important;
-    height: auto !important;
-  }
-
-  .chord-display-fit-shell {
-    width: auto !important;
-    height: auto !important;
-  }
-
-  .chord-display-fit-inner {
-    --chord-sheet-scale: 1;
-    --chord-sheet-inner-w: auto;
-    transform: none !important;
-    width: auto !important;
-  }
-
   .app-header,
   nav,
   .no-print {
