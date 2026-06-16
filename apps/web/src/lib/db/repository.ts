@@ -343,6 +343,10 @@ export async function deleteSetlistItem(id: string): Promise<void> {
   };
   await db.setlistItems.put(updated);
   await enqueueSync("setlist_item", id, "delete", { id });
+
+  // The setlist detail page reloads `items` only when `setlist.updatedAt` changes.
+  // Bumping it here ensures the UI updates immediately after deletion.
+  await updateSetlist(existing.setlistId, {});
 }
 
 export async function reorderSetlistItems(
